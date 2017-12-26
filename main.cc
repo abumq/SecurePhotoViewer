@@ -5,7 +5,7 @@
  * The contents of archive is expected to be in following format
  *     <IV>:<Base-64 of Encrypted Zip File>
  *
- * Full compile command: g++ main.cc libzippp.cpp mine.cc -I/usr/local/lib -lsfml-graphics  -lsfml-window -lsfml-system -lripe -lzip -lz -o secure-photo-viewer -std=c++11 -O3
+ * Full compile command: g++ main.cc external/libzippp.cpp external/mine.cc -I/usr/local/lib -lsfml-graphics  -lsfml-window -lsfml-system -lripe -lzip -lz -o secure-photo-viewer -std=c++11 -O3
  *
  * In order to run program you will need to provide AES key in first 
  * param and archive name in second, e.g,
@@ -20,6 +20,8 @@
  *      - Backspace: Zoom Out
  *      - Backslash (\): Reset Zoom
  *      - F: Enter/exit Fullscreen
+ *
+ * Author: abumusamq (Majid)
  */
 
 #include <vector>
@@ -27,8 +29,8 @@
 #include <fstream>
 #include <algorithm>
 #include <SFML/Graphics.hpp>
-#include "mine.h"
-#include "libzippp.h"
+#include "external/mine.h"
+#include "external/libzippp.h"
 
 using namespace libzippp;
 
