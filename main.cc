@@ -47,40 +47,55 @@ static const float kRightAngle = 90.0f;
  * Represents single item with it's attributes
  */
 struct Item {
+    /**
+     * Image object in item
+     */
     sf::Image image;
+    
+    /**
+     * Image size (file size in bytes)
+     */
     std::size_t size;
+    
+    /**
+     * Filename in archive
+     */
     std::string name;
 };
 
-/**
- * Global texture object
- */
-sf::Texture texture;
+struct Viewer {
+    /**
+     * Global texture object
+     */
+    sf::Texture texture;
+    
+    /**
+     * Global sprite object
+     */
+    sf::Sprite sprite;
+    
+    /**
+     * Global rotation tracking variable
+     */
+    float currentRotation;
+    
+    /**
+     * Name of current archive being viewed
+     */
+    std::string archiveName;
+    
+    /**
+     * Current photo index (zero-based)
+     */
+    int currIdx;
+    
+    /**
+     * Items in archive being viewed
+     */
+    std::vector<Item> list;
+};
 
-/**
- * Global sprite object
- */
-sf::Sprite sprite;
-
-/**
- * Global rotation tracking variable
- */
-float currentRotation = 0.0;
-
-/**
- * Name of current archive being viewed
- */
-std::string archiveName;
-
-/**
- * Current photo index (zero-based)
- */
-int currIdx = 0;
-
-/**
- * Items in archive being viewed
- */
-std::vector<Item> list;
+Viewer viewer;
 
 /**
  * Returns true if subject ends with str
@@ -165,22 +180,19 @@ std::vector<Item> createList(const std::string& insecureArchive, bool doCleanUp)
 }
 
 /**
- * Navigates to specified index from list
- *
- * This function updates the texture. you may need to load the initial image
- * for the texture before this function will have any affect
+ * Navigates to current index
  */
-void navigateTo(int idx, std::vector<Item>* list)
+void navigate()
 {
-    Item item = list->at(idx);
+    Item item = viewer.list.at(viewer.currIdx);
     
-    texture.loadFromImage(item.image);
-    sprite.setTextureRect(sf::IntRect(0, 0, (int) item.image.getSize().x, (int) item.image.getSize().y));
+    viewer.texture.loadFromImage(item.image);
+    viewer.sprite.setTextureRect(sf::IntRect(0, 0, (int) item.image.getSize().x, (int) item.image.getSize().y));
     
-    sprite.setScale(1.0f, 1.0f);
-    sprite.setPosition(0.0f, 0.0f);
-    std::cout << "Opening [" << (idx + 1) << " / "
-                << list->size() << "] " << item.name << " ("
+    viewer.sprite.setScale(1.0f, 1.0f);
+    viewer.sprite.setPosition(0.0f, 0.0f);
+    std::cout << "Opening [" << (viewer.currIdx + 1) << " / "
+                << viewer.list.size() << "] " << item.name << " ("
                 << item.size << " bytes)";
     std::cout << " (" << item.image.getSize().x << " x " << item.image.getSize().y << ")" << std::endl;
 }
@@ -190,12 +202,12 @@ void navigateTo(int idx, std::vector<Item>* list)
  */
 void reset()
 {
-    sprite.setPosition(0.0f, 0.0f);
-    sprite.setScale(1.0f, 1.0f);
-    if (currentRotation != 0.0f)
+    viewer.sprite.setPosition(0.0f, 0.0f);
+    viewer.sprite.setScale(1.0f, 1.0f);
+    if (viewer.currentRotation != 0.0f)
     {
-        sprite.rotate(-currentRotation);
-        currentRotation = 0.0f;
+        viewer.sprite.rotate(-viewer.currentRotation);
+        viewer.currentRotation = 0.0f;
     }
 }
 
@@ -204,7 +216,7 @@ void reset()
  */
 void zoomIn()
 {
-    sprite.setScale(sprite.getScale().x + 0.5f, sprite.getScale().y + 0.5f);
+    viewer.sprite.setScale(viewer.sprite.getScale().x + 0.5f, viewer.sprite.getScale().y + 0.5f);
 }
 
 /**
@@ -212,9 +224,9 @@ void zoomIn()
  */
 void zoomOut()
 {
-    if (sprite.getScale().x > 0.5f)
+    if (viewer.sprite.getScale().x > 0.5f)
     {
-        sprite.setScale(sprite.getScale().x - 0.5f, sprite.getScale().y - 0.5f);
+        viewer.sprite.setScale(viewer.sprite.getScale().x - 0.5f, viewer.sprite.getScale().y - 0.5f);
     }
 }
 
@@ -223,9 +235,9 @@ void zoomOut()
  */
 bool moveVerticallyIfZoomed(float moveFactor)
 {
-    if (sprite.getScale().y != 1.0f)
+    if (viewer.sprite.getScale().y != 1.0f)
     {
-        sprite.move(0.0f, moveFactor);
+        viewer.sprite.move(0.0f, moveFactor);
         return true;
     }
     return false;
@@ -236,9 +248,9 @@ bool moveVerticallyIfZoomed(float moveFactor)
  */
 bool moveHorizontallyIfZoomed(float moveFactor)
 {
-    if (sprite.getScale().x != 1.0f)
+    if (viewer.sprite.getScale().x != 1.0f)
     {
-        sprite.move(moveFactor, 0.0f);
+        viewer.sprite.move(moveFactor, 0.0f);
         return true;
     }
     return false;
@@ -249,7 +261,7 @@ bool moveHorizontallyIfZoomed(float moveFactor)
  */
 std::string getWindowTitle()
 {
-    return std::to_string(currIdx + 1) + " / " + std::to_string(list.size()) + " - " + "Secure Photo - " + archiveName;
+    return std::to_string(viewer.currIdx + 1) + " / " + std::to_string(viewer.list.size()) + " - " + "Secure Photo - " + viewer.archiveName;
 }
 
 int main(int argc, const char** argv)
@@ -262,19 +274,21 @@ int main(int argc, const char** argv)
     
     bool isFullscreen = false;
     
-    archiveName = argv[1];
+    viewer.archiveName = argv[1];
+    viewer.currentRotation = 0.0f;
+    viewer.currIdx = 0;
     
     std::string tempFilename;
     
     if (argc > 2)
     {
-        tempFilename = unpack(archiveName, argv[2]);
+        tempFilename = unpack(viewer.archiveName, argv[2]);
     } else
     {
-        tempFilename = archiveName; // insecure archive
+        tempFilename = viewer.archiveName; // insecure archive
     }
     
-    list = createList(tempFilename, argc > 2);
+    viewer.list = createList(tempFilename, argc > 2);
     
     sf::VideoMode winMode = sf::VideoMode::getFullscreenModes().at(0);
     sf::Image winIcon;
@@ -284,13 +298,13 @@ int main(int argc, const char** argv)
     
     if (argc > 3)
     {
-        currIdx = std::max(std::min(atoi(argv[3]) - 1, static_cast<int>(list.size() - 1)), 0);
+        viewer.currIdx = std::max(std::min(atoi(argv[3]) - 1, static_cast<int>(viewer.list.size() - 1)), 0);
     }
     window.setTitle(getWindowTitle());
     
-    sprite.setTexture(texture);
+    viewer.sprite.setTexture(viewer.texture);
     
-    navigateTo(currIdx, &list);
+    navigate();
     
     while (window.isOpen())
     {
@@ -326,12 +340,12 @@ int main(int argc, const char** argv)
                         case sf::Keyboard::Right:
                             if (!moveHorizontallyIfZoomed(-kMoveFactor))
                             {
-                                currIdx++;
-                                if (currIdx > static_cast<int>(list.size() - 1))
+                                viewer.currIdx++;
+                                if (viewer.currIdx > static_cast<int>(viewer.list.size() - 1))
                                 {
-                                    currIdx = 0;
+                                    viewer.currIdx = 0;
                                 }
-                                navigateTo(currIdx, &list);
+                                navigate();
                                 reset();
                                 window.setTitle(getWindowTitle());
                             }
@@ -339,12 +353,12 @@ int main(int argc, const char** argv)
                         case sf::Keyboard::Left:
                             if (!moveHorizontallyIfZoomed(kMoveFactor))
                             {
-                                currIdx--;
-                                if (currIdx < 0)
+                                viewer.currIdx--;
+                                if (viewer.currIdx < 0)
                                 {
-                                    currIdx = static_cast<int>(list.size() - 1);
+                                    viewer.currIdx = static_cast<int>(viewer.list.size() - 1);
                                 }
-                                navigateTo(currIdx, &list);
+                                navigate();
                                 reset();
                                 window.setTitle(getWindowTitle());
                             }
@@ -352,15 +366,15 @@ int main(int argc, const char** argv)
                         case sf::Keyboard::Up:
                             if (!moveVerticallyIfZoomed(kMoveFactor))
                             {
-                                currentRotation += kRightAngle;
-                                sprite.rotate(kRightAngle);
+                                viewer.currentRotation += kRightAngle;
+                                viewer.sprite.rotate(kRightAngle);
                             }
                             break;
                         case sf::Keyboard::Down:
                             if (!moveVerticallyIfZoomed(-kMoveFactor))
                             {
-                                currentRotation -= kRightAngle;
-                                sprite.rotate(-kRightAngle);
+                                viewer.currentRotation -= kRightAngle;
+                                viewer.sprite.rotate(-kRightAngle);
                             }
                             break;
                         case sf::Keyboard::Equal:
@@ -383,7 +397,7 @@ int main(int argc, const char** argv)
         }
         
         window.clear(sf::Color::Black);
-        window.draw(sprite);
+        window.draw(viewer.sprite);
         window.display();
     }
     return 0;
