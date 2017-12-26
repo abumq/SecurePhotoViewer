@@ -240,9 +240,11 @@ int main(int argc, const char** argv)
     std::vector<Item> list = createList(tempFilename);
     
     sf::VideoMode winMode = sf::VideoMode::getFullscreenModes().at(0);
-    std::string winTitle =  " / " + std::to_string(list.size())
-    + " - " + "Secure Photo - " + std::string(argv[2]);
+    std::string winTitle =  " / " + std::to_string(list.size()) + " - " + "Secure Photo - " + std::string(argv[2]);
+    sf::Image winIcon;
+    winIcon.loadFromFile("icon.png");
     sf::RenderWindow window(winMode, winTitle);
+    window.setIcon(256, 256, winIcon.getPixelsPtr());
     
     int currIdx = argc > 3 ? std::max(std::min(atoi(argv[3]) - 1, static_cast<int>(list.size() - 1)), 0) : 0;
     window.setTitle("#" + std::to_string(currIdx + 1) + winTitle);
