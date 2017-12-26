@@ -9,7 +9,7 @@
  *
  * In order to run program you will need to provide AES key in first 
  * param and archive name in second, e.g,
- *    ./secure-photo-viewer AES_KEY ARCHIVE <INITIAL_IMAGE_INDEX>
+ *    ./secure-photo-viewer ARCHIVE KEY <INITIAL_IMAGE_INDEX>
  *
  * Keys:
  *      - Right Arrow: Next photo / Re-position when zoomed
@@ -82,7 +82,7 @@ bool endsWith(const std::string& subject, const std::string& str)
 /**
  * Unpacks the encrypted archive and returns temporary filename of unencrypted archive
  */
-std::string unpack(const std::string& key, const std::string& archiveFilename)
+std::string unpack(const std::string& archiveFilename, const std::string& key)
 {
     
     std::cout << "Unpacking..." << std::endl;

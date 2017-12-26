@@ -27,13 +27,13 @@ In order to run program you will need to provide AES key in first
 param and archive name in second, e.g,
 
 ```
-   ./secure-photo-viewer AES_KEY ARCHIVE <INITIAL_IMAGE>
+   ./secure-photo-viewer ARCHIVE KEY <INITIAL_IMAGE>
 ```
 
 To open sample archive
 
 ```
- ./secure-photo-viewer `cat sample-key` sample-archive.archive
+ ./secure-photo-viewer sample-archive.archive `cat sample-key`
 ```
    
 ### Keyboard
