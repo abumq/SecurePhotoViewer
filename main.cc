@@ -180,24 +180,6 @@ std::vector<Item> createList(const std::string& insecureArchive, bool doCleanUp)
 }
 
 /**
- * Navigates to current index
- */
-void navigate()
-{
-    Item item = viewer.list.at(viewer.currIdx);
-    
-    viewer.texture.loadFromImage(item.image);
-    viewer.sprite.setTextureRect(sf::IntRect(0, 0, (int) item.image.getSize().x, (int) item.image.getSize().y));
-    
-    viewer.sprite.setScale(1.0f, 1.0f);
-    viewer.sprite.setPosition(0.0f, 0.0f);
-    std::cout << "Opening [" << (viewer.currIdx + 1) << " / "
-                << viewer.list.size() << "] " << item.name << " ("
-                << item.size << " bytes)";
-    std::cout << " (" << item.image.getSize().x << " x " << item.image.getSize().y << ")" << std::endl;
-}
-
-/**
  * Reset zoom level to original, the position to 0,0 and rotation
  */
 void reset()
@@ -264,6 +246,25 @@ std::string getWindowTitle()
     return std::to_string(viewer.currIdx + 1) + " / " + std::to_string(viewer.list.size()) + " - " + "Secure Photo - " + viewer.archiveName;
 }
 
+/**
+ * Navigates to current index
+ */
+void navigate()
+{
+    Item item = viewer.list.at(viewer.currIdx);
+    
+    viewer.texture.loadFromImage(item.image);
+    viewer.sprite.setTextureRect(sf::IntRect(0, 0, (int) item.image.getSize().x, (int) item.image.getSize().y));
+    
+    viewer.sprite.setScale(1.0f, 1.0f);
+    viewer.sprite.setPosition(0.0f, 0.0f);
+    std::cout << "Opening [" << (viewer.currIdx + 1) << " / "
+    << viewer.list.size() << "] " << item.name << " ("
+    << item.size << " bytes)";
+    std::cout << " (" << item.image.getSize().x << " x " << item.image.getSize().y << ")" << std::endl;
+    reset();
+}
+
 int main(int argc, const char** argv)
 {
     if (argc < 2)
@@ -300,11 +301,11 @@ int main(int argc, const char** argv)
     {
         viewer.currIdx = std::max(std::min(atoi(argv[3]) - 1, static_cast<int>(viewer.list.size() - 1)), 0);
     }
-    window.setTitle(getWindowTitle());
     
     viewer.sprite.setTexture(viewer.texture);
     
     navigate();
+    window.setTitle(getWindowTitle());
     
     while (window.isOpen())
     {
@@ -346,7 +347,6 @@ int main(int argc, const char** argv)
                                     viewer.currIdx = 0;
                                 }
                                 navigate();
-                                reset();
                                 window.setTitle(getWindowTitle());
                             }
                             break;
@@ -359,7 +359,6 @@ int main(int argc, const char** argv)
                                     viewer.currIdx = static_cast<int>(viewer.list.size() - 1);
                                 }
                                 navigate();
-                                reset();
                                 window.setTitle(getWindowTitle());
                             }
                             break;
