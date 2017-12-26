@@ -9,7 +9,7 @@
  *
  * In order to run program you will need to provide AES key in first 
  * param and archive name in second, e.g,
- *    ./secure-photo-viewer ARCHIVE KEY <INITIAL_IMAGE_INDEX>
+ *    ./secure-photo-viewer <archive> <key> [<initial_index> = 0]
  *
  * Keys:
  *      - Right Arrow: Next photo / Re-position when zoomed
@@ -230,7 +230,7 @@ int main(int argc, const char** argv)
 {
     if (argc < 3)
     {
-        std::cout << "Usage: " << argv[0] << " <key> <secure_archive> [<start_index>=0]" << std::endl;
+        std::cout << "Usage: " << argv[0] << " <archive> <key> [<initial_index> = 0]" << std::endl;
         return 1;
     }
     
