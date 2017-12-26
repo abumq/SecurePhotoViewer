@@ -44,6 +44,15 @@ static const float kMoveFactor = 20.0f;
 static const float kRightAngle = 90.0f;
 
 /**
+ * Represents single item with it's attributes
+ */
+struct Item {
+    sf::Image image;
+    std::size_t size;
+    std::string name;
+};
+
+/**
  * Global texture object
  */
 sf::Texture texture;
@@ -57,15 +66,6 @@ sf::Sprite sprite;
  * Global rotation tracking variable
  */
 float currentRotation = 0.0;
-
-/**
- * Represents single item with it's attributes
- */
-struct Item {
-    sf::Image image;
-    std::size_t size;
-    std::string name;
-};
 
 /**
  * Name of current archive being viewed
