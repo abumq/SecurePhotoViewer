@@ -33,12 +33,10 @@
 #include "external/mine.h"
 #include "external/libzippp.h"
 
-using namespace libzippp;
-
 /**
  * Represents the move factor for positioning when zoomed in
  */
-const float kMoveFactor = 20.0f;
+static const float kMoveFactor = 20.0f;
 
 /**
  * Global image object
@@ -55,6 +53,9 @@ sf::Texture texture;
  */
 sf::Sprite sprite;
 
+/**
+ * Global rotation tracking variable
+ */
 float currentRotation = 0.0;
 
 /**
@@ -117,11 +118,11 @@ std::vector<Item> createList(const std::string& insecureArchive)
     std::vector<Item> list;
     std::cout << "Loading..." << std::endl;
     
-    ZipArchive zf(insecureArchive);
-    zf.open(ZipArchive::READ_ONLY);
+    libzippp::ZipArchive zf(insecureArchive);
+    zf.open(libzippp::ZipArchive::READ_ONLY);
     
-    const std::vector<ZipEntry> entries = zf.getEntries();
-    for (std::vector<ZipEntry>::const_iterator entry = entries.begin(); entry != entries.end(); ++entry)
+    const std::vector<libzippp::ZipEntry> entries = zf.getEntries();
+    for (std::vector<libzippp::ZipEntry>::const_iterator entry = entries.begin(); entry != entries.end(); ++entry)
     {
         void* data = entry->readAsBinary();
         if ((endsWith(entry->getName(), ".jpg")
