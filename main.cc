@@ -5,8 +5,7 @@
  * The contents of archive is expected to be in following format
  *     <IV>:<Base-64 of Encrypted Zip File>
  *
- * Link following libraries: -lsfml-graphics  -lsfml-window -lsfml-system -lripe -lzip
- * Full compile command: g++ main.cc libzippp.cpp -I/usr/local/lib -lsfml-graphics  -lsfml-window -lsfml-system -lripe -lzip -o secure-photo-viewer
+ * Full compile command: g++ main.cc libzippp.cpp mine.cc -I/usr/local/lib -lsfml-graphics  -lsfml-window -lsfml-system -lripe -lzip -lz -o secure-photo-viewer -std=c++11 -O3
  *
  * In order to run program you will need to provide AES key in first 
  * param and archive name in second, e.g,
