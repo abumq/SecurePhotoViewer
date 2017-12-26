@@ -68,6 +68,21 @@ struct Item {
 };
 
 /**
+ * Name of current archive being viewed
+ */
+std::string archiveName;
+
+/**
+ * Current photo index (zero-based)
+ */
+int currIdx = 0;
+
+/**
+ * Items in archive being viewed
+ */
+std::vector<Item> list;
+
+/**
  * Returns true if subject ends with str
  */
 bool endsWith(const std::string& subject, const std::string& str)
@@ -229,6 +244,14 @@ bool moveHorizontallyIfZoomed(float moveFactor)
     return false;
 }
 
+/**
+ * Get window title based on idx
+ */
+std::string getWindowTitle()
+{
+    return std::to_string(currIdx + 1) + " / " + std::to_string(list.size()) + " - " + "Secure Photo - " + archiveName;
+}
+
 int main(int argc, const char** argv)
 {
     if (argc < 2)
@@ -239,27 +262,31 @@ int main(int argc, const char** argv)
     
     bool isFullscreen = false;
     
+    archiveName = argv[1];
+    
     std::string tempFilename;
     
     if (argc > 2)
     {
-        tempFilename = unpack(argv[1], argv[2]);
+        tempFilename = unpack(archiveName, argv[2]);
     } else
     {
-        tempFilename = argv[1]; // insecure archive
+        tempFilename = archiveName; // insecure archive
     }
     
-    std::vector<Item> list = createList(tempFilename, argc > 2);
+    list = createList(tempFilename, argc > 2);
     
     sf::VideoMode winMode = sf::VideoMode::getFullscreenModes().at(0);
-    std::string winTitle =  " / " + std::to_string(list.size()) + " - " + "Secure Photo - " + std::string(argv[1]);
     sf::Image winIcon;
     winIcon.loadFromFile("icon.png");
-    sf::RenderWindow window(winMode, winTitle);
+    sf::RenderWindow window(winMode, "Secure Photo [Loading...]");
     window.setIcon(256, 256, winIcon.getPixelsPtr());
     
-    int currIdx = argc > 3 ? std::max(std::min(atoi(argv[3]) - 1, static_cast<int>(list.size() - 1)), 0) : 0;
-    window.setTitle(std::to_string(currIdx + 1) + winTitle);
+    if (argc > 3)
+    {
+        currIdx = std::max(std::min(atoi(argv[3]) - 1, static_cast<int>(list.size() - 1)), 0);
+    }
+    window.setTitle(getWindowTitle());
     
     sprite.setTexture(texture);
     
@@ -286,12 +313,12 @@ int main(int argc, const char** argv)
                         case sf::Keyboard::F:
                             if (isFullscreen)
                             {
-                                window.create(winMode, std::to_string(currIdx + 1) + winTitle);
+                                window.create(winMode, getWindowTitle());
                                 isFullscreen = false;
                             } else
                             {
                                 window.create(winMode,
-                                              std::to_string(currIdx + 1) + winTitle,
+                                              getWindowTitle(),
                                               sf::Style::Default | sf::Style::Fullscreen);
                                 isFullscreen = true;
                             }
@@ -306,7 +333,7 @@ int main(int argc, const char** argv)
                                 }
                                 navigateTo(currIdx, &list);
                                 reset();
-                                window.setTitle(std::to_string(currIdx + 1) + winTitle);
+                                window.setTitle(getWindowTitle());
                             }
                             break;
                         case sf::Keyboard::Left:
@@ -319,7 +346,7 @@ int main(int argc, const char** argv)
                                 }
                                 navigateTo(currIdx, &list);
                                 reset();
-                                window.setTitle(std::to_string(currIdx + 1) + winTitle);
+                                window.setTitle(getWindowTitle());
                             }
                             break;
                         case sf::Keyboard::Up:
