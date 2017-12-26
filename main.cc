@@ -9,7 +9,7 @@
  *
  * In order to run program you will need to provide AES key in first 
  * param and archive name in second, e.g,
- *    ./secure-photo-viewer <archive> <key> [<initial_index> = 0]
+ *    ./secure-photo-viewer <archive> [<key> = ""] [<initial_index> = 0]
  *
  * Keys:
  *      - Right Arrow: Next photo / Re-position when zoomed
@@ -113,7 +113,7 @@ std::string unpack(const std::string& archiveFilename, const std::string& key)
 /**
  * Loads the items from insecure (unencrypted) archive and returns the list
  */
-std::vector<Item> createList(const std::string& insecureArchive)
+std::vector<Item> createList(const std::string& insecureArchive, bool doCleanUp)
 {
     std::vector<Item> list;
     std::cout << "Loading..." << std::endl;
@@ -141,8 +141,11 @@ std::vector<Item> createList(const std::string& insecureArchive)
     zf.close();
     
     std::cout << list.size() << " images" << std::endl;
-    std::cout << "Clean up..." << std::endl;
-    remove(insecureArchive.c_str());
+    if (doCleanUp)
+    {
+        std::cout << "Clean up..." << std::endl;
+        remove(insecureArchive.c_str());
+    }
     return list;
 }
 
@@ -228,17 +231,25 @@ bool moveHorizontallyIfZoomed(float moveFactor)
 
 int main(int argc, const char** argv)
 {
-    if (argc < 3)
+    if (argc < 2)
     {
-        std::cout << "Usage: " << argv[0] << " <archive> <key> [<initial_index> = 0]" << std::endl;
+        std::cout << "Usage: " << argv[0] << " <archive> [<key> = \"\"] [<initial_index> = 0]" << std::endl;
         return 1;
     }
     
     bool isFullscreen = false;
     
-    std::string tempFilename = unpack(argv[1], argv[2]);
+    std::string tempFilename;
     
-    std::vector<Item> list = createList(tempFilename);
+    if (argc > 2)
+    {
+        tempFilename = unpack(argv[1], argv[2]);
+    } else
+    {
+        tempFilename = argv[1]; // insecure archive
+    }
+    
+    std::vector<Item> list = createList(tempFilename, argc > 2);
     
     sf::VideoMode winMode = sf::VideoMode::getFullscreenModes().at(0);
     std::string winTitle =  " / " + std::to_string(list.size()) + " - " + "Secure Photo - " + std::string(argv[1]);
