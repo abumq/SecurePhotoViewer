@@ -39,6 +39,11 @@
 static const float kMoveFactor = 20.0f;
 
 /**
+ * Right angle (90')
+ */
+static const float kRightAngle = 90.0f;
+
+/**
  * Global texture object
  */
 sf::Texture texture;
@@ -309,15 +314,15 @@ int main(int argc, const char** argv)
                         case sf::Keyboard::Up:
                             if (!moveVerticallyIfZoomed(kMoveFactor))
                             {
-                                currentRotation += 90.0f;
-                                sprite.rotate(90.0f);
+                                currentRotation += kRightAngle;
+                                sprite.rotate(kRightAngle);
                             }
                             break;
                         case sf::Keyboard::Down:
                             if (!moveVerticallyIfZoomed(-kMoveFactor))
                             {
-                                currentRotation -= 90.0f;
-                                sprite.rotate(-90.0f);
+                                currentRotation -= kRightAngle;
+                                sprite.rotate(-kRightAngle);
                             }
                             break;
                         case sf::Keyboard::Equal:
