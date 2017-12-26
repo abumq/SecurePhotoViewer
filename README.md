@@ -14,6 +14,13 @@ The contents of archive is expected to be in following format
 <IV>:<Base-64 of Encrypted Zip File>
 ```
 
+## Build
+Prerequisites:
+ * [libzip](https://github.com/nih-at/libzip/blob/master/INSTALL.md)
+ * [SFML 2.4.2](https://www.sfml-dev.org/download/sfml/2.4.2)
+ 
+Once you have above libraries properly installed, simply run `make` command to build binary.
+
 ### Usage
 
 In order to run program you will need to provide AES key in first 
