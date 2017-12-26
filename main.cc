@@ -39,11 +39,6 @@
 static const float kMoveFactor = 20.0f;
 
 /**
- * Global image object
- */
-sf::Image image;
-
-/**
  * Global texture object
  */
 sf::Texture texture;
@@ -62,7 +57,7 @@ float currentRotation = 0.0;
  * Represents single item with it's attributes
  */
 struct Item {
-    void* data;
+    sf::Image image;
     std::size_t size;
     std::string name;
 };
@@ -124,7 +119,6 @@ std::vector<Item> createList(const std::string& insecureArchive)
     const std::vector<libzippp::ZipEntry> entries = zf.getEntries();
     for (std::vector<libzippp::ZipEntry>::const_iterator entry = entries.begin(); entry != entries.end(); ++entry)
     {
-        void* data = entry->readAsBinary();
         if ((endsWith(entry->getName(), ".jpg")
              || endsWith(entry->getName(), ".png")
              || endsWith(entry->getName(), ".jpeg")
@@ -134,7 +128,8 @@ std::vector<Item> createList(const std::string& insecureArchive)
                 && entry->getName().substr(0, 9) != "__MACOSX/")
             )
         {
-            Item item = {data, entry->getSize(), entry->getName()};
+            Item item = {sf::Image(), entry->getSize(), entry->getName()};
+            item.image.loadFromMemory(entry->readAsBinary(), item.size);
             list.push_back(item);
         }
     }
@@ -155,15 +150,16 @@ std::vector<Item> createList(const std::string& insecureArchive)
 void navigateTo(int idx, std::vector<Item>* list)
 {
     Item item = list->at(idx);
-    image.loadFromMemory(item.data, item.size);
     
-    texture.loadFromImage(image);
-    sprite.setTextureRect(sf::IntRect(0, 0, (int) image.getSize().x, (int) image.getSize().y));
+    texture.loadFromImage(item.image);
+    sprite.setTextureRect(sf::IntRect(0, 0, (int) item.image.getSize().x, (int) item.image.getSize().y));
     
     sprite.setScale(1.0f, 1.0f);
     sprite.setPosition(0.0f, 0.0f);
-    std::cout << "Opening [" << (idx + 1) << " / " << list->size() << "] " << item.name << " (" << item.size << " bytes)";
-    std::cout << " (" << image.getSize().x << " x " << image.getSize().y << ")" << std::endl;
+    std::cout << "Opening [" << (idx + 1) << " / "
+                << list->size() << "] " << item.name << " ("
+                << item.size << " bytes)";
+    std::cout << " (" << item.image.getSize().x << " x " << item.image.getSize().y << ")" << std::endl;
 }
 
 /**
@@ -247,7 +243,7 @@ int main(int argc, const char** argv)
     window.setIcon(256, 256, winIcon.getPixelsPtr());
     
     int currIdx = argc > 3 ? std::max(std::min(atoi(argv[3]) - 1, static_cast<int>(list.size() - 1)), 0) : 0;
-    window.setTitle("#" + std::to_string(currIdx + 1) + winTitle);
+    window.setTitle(std::to_string(currIdx + 1) + winTitle);
     
     sprite.setTexture(texture);
     
@@ -274,12 +270,12 @@ int main(int argc, const char** argv)
                         case sf::Keyboard::F:
                             if (isFullscreen)
                             {
-                                window.create(winMode, "#" + std::to_string(currIdx + 1) + winTitle);
+                                window.create(winMode, std::to_string(currIdx + 1) + winTitle);
                                 isFullscreen = false;
                             } else
                             {
                                 window.create(winMode,
-                                              "#" + std::to_string(currIdx + 1) + winTitle,
+                                              std::to_string(currIdx + 1) + winTitle,
                                               sf::Style::Default | sf::Style::Fullscreen);
                                 isFullscreen = true;
                             }
@@ -294,7 +290,7 @@ int main(int argc, const char** argv)
                                 }
                                 navigateTo(currIdx, &list);
                                 reset();
-                                window.setTitle("#" + std::to_string(currIdx + 1) + winTitle);
+                                window.setTitle(std::to_string(currIdx + 1) + winTitle);
                             }
                             break;
                         case sf::Keyboard::Left:
@@ -307,7 +303,7 @@ int main(int argc, const char** argv)
                                 }
                                 navigateTo(currIdx, &list);
                                 reset();
-                                window.setTitle("#" + std::to_string(currIdx + 1) + winTitle);
+                                window.setTitle(std::to_string(currIdx + 1) + winTitle);
                             }
                             break;
                         case sf::Keyboard::Up:
