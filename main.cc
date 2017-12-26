@@ -241,7 +241,7 @@ int main(int argc, const char** argv)
     std::vector<Item> list = createList(tempFilename);
     
     sf::VideoMode winMode = sf::VideoMode::getFullscreenModes().at(0);
-    std::string winTitle =  " / " + std::to_string(list.size()) + " - " + "Secure Photo - " + std::string(argv[2]);
+    std::string winTitle =  " / " + std::to_string(list.size()) + " - " + "Secure Photo - " + std::string(argv[1]);
     sf::Image winIcon;
     winIcon.loadFromFile("icon.png");
     sf::RenderWindow window(winMode, winTitle);
