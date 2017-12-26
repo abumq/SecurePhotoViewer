@@ -31,5 +31,6 @@ param and archive name in second, e.g,
 - Down Arrow: Re-position when zoomed
 - Equal: Zoom In
 - Backspace: Zoom Out
-- Backslash (\): Reset Zoom
+- Backslash (`\`): Reset Zoom
 - F Key: Enter/exit Fullscreen
+- Escape: Exit
