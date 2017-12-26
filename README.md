@@ -29,6 +29,12 @@ param and archive name in second, e.g,
 ```
    ./secure-photo-viewer AES_KEY ARCHIVE <INITIAL_IMAGE>
 ```
+
+To open sample archive
+
+```
+ ./secure-photo-viewer `cat sample-key` sample-archive.archive
+```
    
 ### Keyboard
 
