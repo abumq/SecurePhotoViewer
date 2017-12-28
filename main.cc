@@ -46,7 +46,8 @@ static const float kRightAngle = 90.0f;
 /**
  * Represents single item with it's attributes
  */
-struct Item {
+struct Item
+{
     /**
      * Image object in item
      */
@@ -63,19 +64,20 @@ struct Item {
     std::string name;
 };
 
-struct Viewer {
+struct Viewer
+{
     /**
-     * Global texture object
+     * Viewer's texture object
      */
     sf::Texture texture;
     
     /**
-     * Global sprite object
+     * Viewer's sprite object
      */
     sf::Sprite sprite;
     
     /**
-     * Global rotation tracking variable
+     * Viewer's global rotation tracking variable
      */
     float currentRotation;
     
@@ -87,7 +89,7 @@ struct Viewer {
     /**
      * Current photo index (zero-based)
      */
-    int currIdx;
+    int currentIndex;
     
     /**
      * Items in archive being viewed
@@ -95,6 +97,9 @@ struct Viewer {
     std::vector<Item> list;
 };
 
+/**
+ * Global viewer object
+ */
 Viewer viewer;
 
 /**
@@ -243,7 +248,7 @@ bool moveHorizontallyIfZoomed(float moveFactor)
  */
 std::string getWindowTitle()
 {
-    return std::to_string(viewer.currIdx + 1) + " / " + std::to_string(viewer.list.size()) + " - " + "Secure Photo - " + viewer.archiveName;
+    return std::to_string(viewer.currentIndex + 1) + " / " + std::to_string(viewer.list.size()) + " - " + "Secure Photo - " + viewer.archiveName;
 }
 
 /**
@@ -251,26 +256,25 @@ std::string getWindowTitle()
  */
 void navigate()
 {
-    Item item = viewer.list.at(viewer.currIdx);
+    Item item = viewer.list.at(viewer.currentIndex);
     
     viewer.texture.loadFromImage(item.image);
     viewer.sprite.setTextureRect(sf::IntRect(0, 0, (int) item.image.getSize().x, (int) item.image.getSize().y));
     
     viewer.sprite.setScale(1.0f, 1.0f);
     viewer.sprite.setPosition(0.0f, 0.0f);
-    std::cout << "Opening [" << (viewer.currIdx + 1) << " / "
-    << viewer.list.size() << "] " << item.name << " ("
-    << item.size << " bytes)";
+    std::cout << "Opening [" << (viewer.currentIndex + 1) << " / "
+                << viewer.list.size() << "] " << item.name << " ("
+                << item.size << " bytes)";
     std::cout << " (" << item.image.getSize().x << " x " << item.image.getSize().y << ")" << std::endl;
     reset();
 }
 
 void next(sf::Window* window)
 {
-    viewer.currIdx++;
-    if (viewer.currIdx > static_cast<int>(viewer.list.size() - 1))
+    if (++viewer.currentIndex > static_cast<int>(viewer.list.size() - 1))
     {
-        viewer.currIdx = 0;
+        viewer.currentIndex = 0;
     }
     navigate();
     window->setTitle(getWindowTitle());
@@ -278,10 +282,9 @@ void next(sf::Window* window)
 
 void prev(sf::Window* window)
 {
-    viewer.currIdx--;
-    if (viewer.currIdx < 0)
+    if (--viewer.currentIndex < 0)
     {
-        viewer.currIdx = static_cast<int>(viewer.list.size() - 1);
+        viewer.currentIndex = static_cast<int>(viewer.list.size() - 1);
     }
     navigate();
     window->setTitle(getWindowTitle());
@@ -299,7 +302,7 @@ int main(int argc, const char** argv)
     
     viewer.archiveName = argv[1];
     viewer.currentRotation = 0.0f;
-    viewer.currIdx = 0;
+    viewer.currentIndex = 0;
     
     std::string tempFilename;
     
@@ -321,7 +324,7 @@ int main(int argc, const char** argv)
     
     if (argc > 3)
     {
-        viewer.currIdx = std::max(std::min(atoi(argv[3]) - 1, static_cast<int>(viewer.list.size() - 1)), 0);
+        viewer.currentIndex = std::max(std::min(atoi(argv[3]) - 1, static_cast<int>(viewer.list.size() - 1)), 0);
     }
     
     viewer.sprite.setTexture(viewer.texture);
@@ -367,7 +370,8 @@ int main(int argc, const char** argv)
                             {
                                 window.create(winMode, getWindowTitle());
                                 isFullscreen = false;
-                            } else
+                            }
+                            else
                             {
                                 window.create(winMode,
                                               getWindowTitle(),
