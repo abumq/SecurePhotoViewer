@@ -265,6 +265,28 @@ void navigate()
     reset();
 }
 
+void next(sf::Window* window)
+{
+    viewer.currIdx++;
+    if (viewer.currIdx > static_cast<int>(viewer.list.size() - 1))
+    {
+        viewer.currIdx = 0;
+    }
+    navigate();
+    window->setTitle(getWindowTitle());
+}
+
+void prev(sf::Window* window)
+{
+    viewer.currIdx--;
+    if (viewer.currIdx < 0)
+    {
+        viewer.currIdx = static_cast<int>(viewer.list.size() - 1);
+    }
+    navigate();
+    window->setTitle(getWindowTitle());
+}
+
 int main(int argc, const char** argv)
 {
     if (argc < 2)
@@ -318,6 +340,21 @@ int main(int argc, const char** argv)
                 case sf::Event::Closed:
                     window.close();
                     break;
+                case sf::Event::MouseButtonPressed:
+                {
+                    switch (event.mouseButton.button)
+                    {
+                        case sf::Mouse::Button::Left:
+                            next(&window);
+                            break;
+                        case sf::Mouse::Button::Right:
+                            prev(&window);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                }
                 case sf::Event::KeyPressed:
                 {
                     switch (event.key.code)
@@ -341,25 +378,13 @@ int main(int argc, const char** argv)
                         case sf::Keyboard::Right:
                             if (!moveHorizontallyIfZoomed(-kMoveFactor))
                             {
-                                viewer.currIdx++;
-                                if (viewer.currIdx > static_cast<int>(viewer.list.size() - 1))
-                                {
-                                    viewer.currIdx = 0;
-                                }
-                                navigate();
-                                window.setTitle(getWindowTitle());
+                                next(&window);
                             }
                             break;
                         case sf::Keyboard::Left:
                             if (!moveHorizontallyIfZoomed(kMoveFactor))
                             {
-                                viewer.currIdx--;
-                                if (viewer.currIdx < 0)
-                                {
-                                    viewer.currIdx = static_cast<int>(viewer.list.size() - 1);
-                                }
-                                navigate();
-                                window.setTitle(getWindowTitle());
+                                prev(&window);
                             }
                             break;
                         case sf::Keyboard::Up:
