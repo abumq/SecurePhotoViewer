@@ -194,7 +194,7 @@ std::vector<Item> createList(const std::string& insecureArchive, bool doCleanUp)
             )
         {
             char* data = static_cast<char*>(entry->readAsBinary());
-            Item item = {data, sf::Image(), entry->getSize(), entry->getName()};
+            Item item = { data, sf::Image(), entry->getSize(), entry->getName() };
             item.image.loadFromMemory(data, item.size);
             list.push_back(item);
         }
