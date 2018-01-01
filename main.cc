@@ -69,6 +69,11 @@ static const float kRightAngle = 90.0f;
 struct Item
 {
     /**
+     * Raw data (this may take more memory)
+     */
+    char* data;
+    
+    /**
      * Image object in item
      */
     sf::Image image;
@@ -188,8 +193,9 @@ std::vector<Item> createList(const std::string& insecureArchive, bool doCleanUp)
                 && entry->getName().substr(0, 9) != "__MACOSX/")
             )
         {
-            Item item = {sf::Image(), entry->getSize(), entry->getName()};
-            item.image.loadFromMemory(entry->readAsBinary(), item.size);
+            char* data = static_cast<char*>(entry->readAsBinary());
+            Item item = {data, sf::Image(), entry->getSize(), entry->getName()};
+            item.image.loadFromMemory(data, item.size);
             list.push_back(item);
         }
     }
@@ -394,16 +400,15 @@ int main(int argc, const char** argv)
                             {
                                 const Item item = viewer.list.at(viewer.currentIndex);
                                 const std::string extension = item.name.substr(item.name.find_last_of("."));
-                                const std::string savePath = kSavePath + "secure-photo-" + mine::AES::generateRandomKey(128) + extension;
-                                std::cout << "Saving... [" << savePath << "]" << std::endl;
-                                if (!item.image.saveToFile(savePath))
-                                {
-                                    std::cerr << "Failed to save" << std::endl;
-                                }
-                                else
-                                {
-                                    std::cout << "Successfully saved!" << std::endl;
-                                }
+                                const std::string filename = kSavePath + "secure-photo-" + mine::AES::generateRandomKey(128) + extension;
+                                std::cout << "Saving... [" << filename << "]" << std::endl;
+                                
+                                // item.image.saveToFile(savePath) causes problem because of version of libjpeg in local dev
+                                // so we manually save the raw data
+                                std::ofstream ofs(filename, std::ios::binary);
+                                ofs.write(item.data, item.size);
+                                ofs.flush();
+                                ofs.close();
                             }
                             else
                             {
