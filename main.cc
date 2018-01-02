@@ -74,11 +74,6 @@ struct Item
     char* data;
     
     /**
-     * Image object in item
-     */
-    sf::Image image;
-    
-    /**
      * Image size (file size in bytes)
      */
     std::size_t size;
@@ -87,6 +82,23 @@ struct Item
      * Filename in archive
      */
     std::string name;
+    
+    /**
+     * Image object
+     */
+    sf::Image image;
+    
+    Item(char* data_, std::size_t size_, const std::string& name_)
+        : data(data_), size(size_), name(name_)
+    {
+        image.loadFromMemory(data_, size_);
+    }
+    
+    Item(const Item& item)
+        : data(item.data), size(item.size), name(item.name)
+    {
+        image.loadFromMemory(item.data, item.size);
+    }
 };
 
 struct Viewer
@@ -182,6 +194,7 @@ std::vector<Item> createList(const std::string& insecureArchive, bool doCleanUp)
     zf.open(libzippp::ZipArchive::READ_ONLY);
     
     const std::vector<libzippp::ZipEntry> entries = zf.getEntries();
+    list.reserve(entries.size());
     for (std::vector<libzippp::ZipEntry>::const_iterator entry = entries.begin(); entry != entries.end(); ++entry)
     {
         if ((endsWith(entry->getName(), ".jpg")
@@ -194,9 +207,7 @@ std::vector<Item> createList(const std::string& insecureArchive, bool doCleanUp)
             )
         {
             char* data = static_cast<char*>(entry->readAsBinary());
-            Item item = { data, sf::Image(), entry->getSize(), entry->getName() };
-            item.image.loadFromMemory(data, item.size);
-            list.push_back(item);
+            list.emplace_back(data, entry->getSize(), entry->getName());
         }
     }
     zf.close();
