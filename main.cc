@@ -195,20 +195,20 @@ std::vector<Item> createList(const std::string& insecureArchive, bool doCleanUp)
     
     const std::vector<libzippp::ZipEntry> entries = zf.getEntries();
     list.reserve(entries.size());
-    for (std::vector<libzippp::ZipEntry>::const_iterator entry = entries.begin(); entry != entries.end(); ++entry)
+    for (auto& entry : entries)
     {
-        if ((endsWith(entry->getName(), ".jpg")
-             || endsWith(entry->getName(), ".png")
-             || endsWith(entry->getName(), ".jpeg")
-             || endsWith(entry->getName(), ".gif")
-             || endsWith(entry->getName(), ".svg"))
-            && (entry->getName().size() > 9
-                && entry->getName().substr(0, 9) != "__MACOSX/")
+        if ((endsWith(entry.getName(), ".jpg")
+             || endsWith(entry.getName(), ".png")
+             || endsWith(entry.getName(), ".jpeg")
+             || endsWith(entry.getName(), ".gif")
+             || endsWith(entry.getName(), ".svg"))
+            && (entry.getName().size() > 9
+                && entry.getName().substr(0, 9) != "__MACOSX/")
             )
         {
-            list.emplace_back(static_cast<char*>(entry->readAsBinary()),
-                              entry->getSize(),
-                              entry->getName());
+            list.emplace_back(static_cast<char*>(entry.readAsBinary()),
+                              entry.getSize(),
+                              entry.getName());
         }
     }
     zf.close();
