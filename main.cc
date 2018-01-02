@@ -206,8 +206,9 @@ std::vector<Item> createList(const std::string& insecureArchive, bool doCleanUp)
                 && entry->getName().substr(0, 9) != "__MACOSX/")
             )
         {
-            char* data = static_cast<char*>(entry->readAsBinary());
-            list.emplace_back(data, entry->getSize(), entry->getName());
+            list.emplace_back(static_cast<char*>(entry->readAsBinary()),
+                              entry->getSize(),
+                              entry->getName());
         }
     }
     zf.close();
