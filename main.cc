@@ -404,14 +404,9 @@ int main(int argc, const char** argv)
                     break;
                 case sf::Event::MouseMoved:
                 {
-                    if (buttonsSprite.getGlobalBounds().contains(event.mouseMove.x, event.mouseMove.y))
-                    {
-                        buttonsSprite.setColor(kDownloadButtonHoverColor);
-                    }
-                    else
-                    {
-                        buttonsSprite.setColor(kDownloadButtonDefaultColor);
-                    }
+                    buttonsSprite.setColor(buttonsSprite.getGlobalBounds().contains(event.mouseMove.x, event.mouseMove.y)
+                                            ? kDownloadButtonHoverColor
+                                            : kDownloadButtonDefaultColor);
                     break;
                 }
                 case sf::Event::MouseButtonPressed:
