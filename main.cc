@@ -163,6 +163,11 @@ std::string unpack(const std::string& archiveFilename, const std::string& key)
     std::string archiveContents((std::istreambuf_iterator<char>(ifs)),
                                 (std::istreambuf_iterator<char>()));
     
+    if (archiveContents.find_first_of(":") != 32)
+    {
+        throw "Invalid encrypted data. Expected <IV>:<B64>";
+    }
+    
     std::string iv(archiveContents.substr(0, 32));
     std::string contents(archiveContents.substr(33));
     
@@ -346,7 +351,15 @@ int main(int argc, const char** argv)
     
     if (argc > 2)
     {
-        tempFilename = unpack(viewer.archiveName, argv[2]);
+        try
+        {
+            tempFilename = unpack(viewer.archiveName, argv[2]);
+        }
+        catch (const char* e)
+        {
+            std::cerr << e << std::endl;
+            return 1;
+        }
     } else
     {
         tempFilename = viewer.archiveName; // insecure archive
