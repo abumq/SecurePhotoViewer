@@ -454,18 +454,12 @@ int main(int argc, const char** argv)
                             window.close();
                             break;
                         case sf::Keyboard::F:
-                            if (isFullscreen)
-                            {
-                                window.create(winMode, getWindowTitle());
-                                isFullscreen = false;
-                            }
-                            else
-                            {
-                                window.create(winMode,
-                                              getWindowTitle(),
-                                              sf::Style::Default | sf::Style::Fullscreen);
-                                isFullscreen = true;
-                            }
+                            window.create(winMode,
+                                          getWindowTitle(),
+                                          isFullscreen
+                                            ? sf::Style::Default
+                                            : sf::Style::Default | sf::Style::Fullscreen);
+                            isFullscreen = !isFullscreen;
                             break;
                         case sf::Keyboard::Right:
                             if (!moveHorizontallyIfZoomed(-kMoveFactor))
