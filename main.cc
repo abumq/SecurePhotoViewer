@@ -194,7 +194,7 @@ std::vector<Item> createList(const std::string& insecureArchive, bool doCleanUp)
     zf.open(libzippp::ZipArchive::READ_ONLY);
     
     const std::vector<libzippp::ZipEntry> entries = zf.getEntries();
-    list.reserve(entries.size());
+    list.reserve(entries.size() + 1);
     for (std::vector<libzippp::ZipEntry>::const_iterator entry = entries.begin(); entry != entries.end(); ++entry)
     {
         if ((endsWith(entry->getName(), ".jpg")
@@ -211,7 +211,7 @@ std::vector<Item> createList(const std::string& insecureArchive, bool doCleanUp)
         }
     }
     zf.close();
-    
+    list.shrink_to_fit();
     std::cout << list.size() << " images" << std::endl;
     if (doCleanUp)
     {
