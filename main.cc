@@ -360,14 +360,15 @@ int main(int argc, const char** argv)
             std::cerr << e << std::endl;
             return 1;
         }
-    } else
+    }
+    else
     {
         tempFilename = viewer.archiveName; // insecure archive
     }
     
     viewer.list = createList(tempFilename, argc > 2);
     
-    sf::VideoMode winMode = sf::VideoMode::getFullscreenModes().at(0);
+    const sf::VideoMode winMode = sf::VideoMode::getFullscreenModes().at(0);
     sf::Image winIcon;
     winIcon.loadFromFile("icon.png");
     sf::RenderWindow window(winMode, "Secure Photo [Loading...]");
