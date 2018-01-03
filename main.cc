@@ -69,7 +69,7 @@ static const int kMaximumThumbnails = 20;
 /**
  * Size of thumbnail in pixels
  */
-static const std::size_t kThumbnailSize = 100;
+static const std::size_t kThumbnailSize = 128;
 
 /**
  * Represents single item with it's attributes
@@ -557,15 +557,15 @@ int main(int argc, const char** argv)
             thumbnailTexture.loadFromImage(item.image);
             thumbnailSprite.setPosition(((window.getSize().x / 2) - ((totalThumbnails / 2) * kThumbnailSize)) + (idx * kThumbnailSize),
                                         window.getSize().y - kThumbnailSize - 10);
-            thumbnailSprite.setTextureRect(sf::IntRect(0, 0, kThumbnailSize, kThumbnailSize));
-            thumbnailSprite.setScale(1, 1);
+            thumbnailSprite.setTextureRect(sf::IntRect(0, 0, kThumbnailSize * 3, kThumbnailSize * 3));
+            thumbnailSprite.setScale(0.25, 0.25);
             if (i == viewer.currentIndex)
             {
-                thumbnailSprite.setColor(sf::Color(0, 0, 255, 200));
+                thumbnailSprite.setColor(sf::Color(255, 255, 255, 100));
             }
             else
             {
-                thumbnailSprite.setColor(sf::Color(255, 255, 255, 100));
+                thumbnailSprite.setColor(sf::Color(255, 255, 255, 200));
             }
             thumbnails[idx] = { i, thumbnailSprite, item.name };
             window.draw(thumbnailSprite);
