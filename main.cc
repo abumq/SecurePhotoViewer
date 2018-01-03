@@ -555,7 +555,8 @@ int main(int argc, const char** argv)
             sf::Sprite thumbnailSprite(thumbnailTexture);
             Item item = viewer.list.at(i);
             thumbnailTexture.loadFromImage(item.image);
-            thumbnailSprite.setPosition(((window.getSize().x / 2) - ((totalThumbnails / 2) * kThumbnailSize)) + (idx * kThumbnailSize), window.getSize().y - kThumbnailSize - 10);
+            thumbnailSprite.setPosition(((window.getSize().x / 2) - ((totalThumbnails / 2) * kThumbnailSize)) + (idx * kThumbnailSize),
+                                        window.getSize().y - kThumbnailSize - 10);
             thumbnailSprite.setTextureRect(sf::IntRect(0, 0, kThumbnailSize, kThumbnailSize));
             thumbnailSprite.setScale(1, 1);
             if (i == viewer.currentIndex)
