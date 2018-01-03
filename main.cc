@@ -317,7 +317,7 @@ bool moveHorizontallyIfZoomed(float moveFactor)
  */
 std::string getWindowTitle()
 {
-    return std::to_string(viewer.currentIndex + 1) + " / " + std::to_string(viewer.list.size()) + " - " + "Secure Photo - " + viewer.archiveName;
+    return std::to_string(viewer.currentIndex + 1) + " / " + std::to_string(viewer.list.size()) + " - Secure Photo - " + viewer.archiveName;
 }
 
 /**
