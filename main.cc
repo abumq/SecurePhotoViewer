@@ -31,7 +31,9 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+
 #include <SFML/Graphics.hpp>
+
 #include "external/mine.h"
 #include "external/libzippp.h"
 #include "external/rc.h"
@@ -436,8 +438,8 @@ int main(int argc, const char** argv)
     buttonsSprite.setColor(kDownloadButtonDefaultColor);
     const std::string rawDownloadButton = mine::Base64::decode(kDownloadButton);
     downloadTexture.loadFromMemory((void*) rawDownloadButton.data(), rawDownloadButton.size());
-    buttonsSprite.setPosition(0, 0);
-    buttonsSprite.setTextureRect(sf::IntRect(0, 0, 100, 100));
+    buttonsSprite.setPosition(window.getSize().x - downloadTexture.getSize().x - 10.0f, 0.0f);
+    buttonsSprite.setTextureRect(sf::IntRect(0.0f, 0.0f, 100.0f, 100.0f));
     
     std::map<std::size_t, Thumbnail> thumbnails;
     
@@ -577,7 +579,7 @@ int main(int argc, const char** argv)
         window.draw(viewer.sprite);
         
         // thumbnails
-                
+        
         const float kThumbnailScale = 7.0f;
         
         const std::size_t firstThumbnailIndex = std::max(viewer.currentIndex - (kMaximumThumbnails / 2), 0);
@@ -600,7 +602,7 @@ int main(int argc, const char** argv)
             }
             else
             {
-                thumbnailSprite.setColor(sf::Color(255, 255, 255, 255));
+                thumbnailSprite.setColor(sf::Color(255, 255, 255, 200));
             }
             thumbnails[idx] = { i, thumbnailSprite };
             window.draw(thumbnailSprite);
