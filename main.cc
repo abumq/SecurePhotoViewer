@@ -350,7 +350,6 @@ void prev(sf::Window* window)
 
 void positionAfterRotation()
 {
-    
     if (viewer.sprite.getRotation() == 90)
     {
         viewer.sprite.setPosition(viewer.sprite.getTexture()->getSize().y, 0);
@@ -570,7 +569,9 @@ int main(int argc, const char** argv)
         
         // thumbnails
         
-        const float kThumbnailScale = 7;
+        std::cout << "drawing..." << std::endl;
+        
+        const float kThumbnailScale = 7.0f;
         
         const std::size_t firstThumbnailIndex = std::max(viewer.currentIndex - (kMaximumThumbnails / 2), 0);
         const std::size_t totalThumbnails = std::min(viewer.list.size(), static_cast<std::size_t>(kMaximumThumbnails));
@@ -582,9 +583,9 @@ int main(int argc, const char** argv)
             sf::Sprite thumbnailSprite(thumbnailTexture);
             Item item = viewer.list.at(i);
             thumbnailTexture.loadFromImage(item.image);
-            thumbnailSprite.setPosition(((window.getSize().x / 2) - ((totalThumbnails / 2) * kThumbnailSize)) + (idx * kThumbnailSize),
+            thumbnailSprite.setPosition(((window.getSize().x / 2.0f) - ((totalThumbnails / 2.0f) * kThumbnailSize)) + (idx * kThumbnailSize),
                                         window.getSize().y - kThumbnailSize - 10);
-            thumbnailSprite.setTextureRect(sf::IntRect(0, 0, kThumbnailSize * kThumbnailScale, kThumbnailSize * kThumbnailScale));
+            thumbnailSprite.setTextureRect(sf::IntRect(0.0f, 0.0f, kThumbnailSize * kThumbnailScale, kThumbnailSize * kThumbnailScale));
             thumbnailSprite.setScale(1.0 / kThumbnailScale, 1.0 / kThumbnailScale);
             if (i == viewer.currentIndex)
             {
