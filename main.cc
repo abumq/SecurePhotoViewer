@@ -577,9 +577,7 @@ int main(int argc, const char** argv)
         window.draw(viewer.sprite);
         
         // thumbnails
-        
-        std::cout << "drawing..." << std::endl;
-        
+                
         const float kThumbnailScale = 7.0f;
         
         const std::size_t firstThumbnailIndex = std::max(viewer.currentIndex - (kMaximumThumbnails / 2), 0);
