@@ -348,6 +348,28 @@ void prev(sf::Window* window)
     window->setTitle(getWindowTitle());
 }
 
+void positionAfterRotation()
+{
+    
+    if (viewer.sprite.getRotation() == 90)
+    {
+        viewer.sprite.setPosition(viewer.sprite.getTexture()->getSize().y, 0);
+    }
+    else if (viewer.sprite.getRotation() == 180)
+    {
+        viewer.sprite.setPosition(viewer.sprite.getTexture()->getSize().y, viewer.sprite.getTexture()->getSize().y);
+    }
+    else if (viewer.sprite.getRotation() == 270)
+    {
+        viewer.sprite.setPosition(0, viewer.sprite.getTexture()->getSize().y);
+    }
+    else
+    {
+        // zero
+        viewer.sprite.setPosition(0, 0);
+    }
+}
+
 int main(int argc, const char** argv)
 {
     if (argc < 2)
@@ -513,6 +535,7 @@ int main(int argc, const char** argv)
                             {
                                 viewer.currentRotation += kRightAngle;
                                 viewer.sprite.rotate(kRightAngle);
+                                positionAfterRotation();
                             }
                             break;
                         case sf::Keyboard::Down:
@@ -520,6 +543,7 @@ int main(int argc, const char** argv)
                             {
                                 viewer.currentRotation -= kRightAngle;
                                 viewer.sprite.rotate(-kRightAngle);
+                                positionAfterRotation();
                             }
                             break;
                         case sf::Keyboard::Equal:
