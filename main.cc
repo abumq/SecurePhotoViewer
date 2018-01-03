@@ -142,11 +142,20 @@ struct Viewer
     std::vector<Item> list;
 };
 
+/**
+ * Simple thumbnail representation
+ */
 struct Thumbnail
 {
+    /**
+     * Index of thumbnail - this will coinside with viewer's currentIndex
+     */
     std::size_t index;
+    
+    /**
+     * Thumbnail's sprite to track click
+     */
     sf::Sprite sprite;
-    std::string name;
 };
 
 /**
@@ -595,7 +604,7 @@ int main(int argc, const char** argv)
             {
                 thumbnailSprite.setColor(sf::Color(255, 255, 255, 255));
             }
-            thumbnails[idx] = { i, thumbnailSprite, item.name };
+            thumbnails[idx] = { i, thumbnailSprite };
             window.draw(thumbnailSprite);
         }
         
