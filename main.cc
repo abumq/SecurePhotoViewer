@@ -545,6 +545,9 @@ int main(int argc, const char** argv)
         window.draw(viewer.sprite);
         
         // thumbnails
+        
+        const float kThumbnailScale = 7;
+        
         const std::size_t firstThumbnailIndex = std::max(viewer.currentIndex - (kMaximumThumbnails / 2), 0);
         const std::size_t totalThumbnails = std::min(viewer.list.size(), static_cast<std::size_t>(kMaximumThumbnails));
         for (std::size_t i = firstThumbnailIndex, idx = 0;
@@ -557,15 +560,15 @@ int main(int argc, const char** argv)
             thumbnailTexture.loadFromImage(item.image);
             thumbnailSprite.setPosition(((window.getSize().x / 2) - ((totalThumbnails / 2) * kThumbnailSize)) + (idx * kThumbnailSize),
                                         window.getSize().y - kThumbnailSize - 10);
-            thumbnailSprite.setTextureRect(sf::IntRect(0, 0, kThumbnailSize * 3, kThumbnailSize * 3));
-            thumbnailSprite.setScale(0.25, 0.25);
+            thumbnailSprite.setTextureRect(sf::IntRect(0, 0, kThumbnailSize * kThumbnailScale, kThumbnailSize * kThumbnailScale));
+            thumbnailSprite.setScale(1.0 / kThumbnailScale, 1.0 / kThumbnailScale);
             if (i == viewer.currentIndex)
             {
                 thumbnailSprite.setColor(sf::Color(255, 255, 255, 100));
             }
             else
             {
-                thumbnailSprite.setColor(sf::Color(255, 255, 255, 200));
+                thumbnailSprite.setColor(sf::Color(255, 255, 255, 255));
             }
             thumbnails[idx] = { i, thumbnailSprite, item.name };
             window.draw(thumbnailSprite);
