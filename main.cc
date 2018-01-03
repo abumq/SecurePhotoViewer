@@ -56,12 +56,12 @@ static const sf::Color kDownloadButtonHoverColor(255, 255, 255, 200);
 /**
  * Represents the move factor for positioning when zoomed in
  */
-static const float kMoveFactor = 20.0f;
+static const float kMoveFactor = 20;
 
 /**
  * Right angle (90')
  */
-static const float kRightAngle = 90.0f;
+static const float kRightAngle = 90;
 
 /**
  * Maximum number of thumbnails to display
@@ -258,12 +258,12 @@ std::vector<Item> createList(const std::string& insecureArchive, bool doCleanUp)
  */
 void reset()
 {
-    viewer.sprite.setPosition(0.0f, 0.0f);
-    viewer.sprite.setScale(1.0f, 1.0f);
-    if (viewer.currentRotation != 0.0f)
+    viewer.sprite.setPosition(0, 0);
+    viewer.sprite.setScale(1, 1);
+    if (viewer.currentRotation != 0)
     {
         viewer.sprite.rotate(-viewer.currentRotation);
-        viewer.currentRotation = 0.0f;
+        viewer.currentRotation = 0;
     }
 }
 
@@ -272,7 +272,7 @@ void reset()
  */
 void zoomIn()
 {
-    viewer.sprite.setScale(viewer.sprite.getScale().x + 0.5f, viewer.sprite.getScale().y + 0.5f);
+    viewer.sprite.setScale(viewer.sprite.getScale().x + 0.5, viewer.sprite.getScale().y + 0.5);
 }
 
 /**
@@ -280,9 +280,9 @@ void zoomIn()
  */
 void zoomOut()
 {
-    if (viewer.sprite.getScale().x > 0.5f)
+    if (viewer.sprite.getScale().x > 0.5)
     {
-        viewer.sprite.setScale(viewer.sprite.getScale().x - 0.5f, viewer.sprite.getScale().y - 0.5f);
+        viewer.sprite.setScale(viewer.sprite.getScale().x - 0.5, viewer.sprite.getScale().y - 0.5);
     }
 }
 
@@ -291,9 +291,9 @@ void zoomOut()
  */
 bool moveVerticallyIfZoomed(float moveFactor)
 {
-    if (viewer.sprite.getScale().y != 1.0f)
+    if (viewer.sprite.getScale().y != 1)
     {
-        viewer.sprite.move(0.0f, moveFactor);
+        viewer.sprite.move(0, moveFactor);
         return true;
     }
     return false;
@@ -304,9 +304,9 @@ bool moveVerticallyIfZoomed(float moveFactor)
  */
 bool moveHorizontallyIfZoomed(float moveFactor)
 {
-    if (viewer.sprite.getScale().x != 1.0f)
+    if (viewer.sprite.getScale().x != 1)
     {
-        viewer.sprite.move(moveFactor, 0.0f);
+        viewer.sprite.move(moveFactor, 0);
         return true;
     }
     return false;
@@ -330,8 +330,8 @@ void navigate()
     viewer.texture.loadFromImage(item.image);
     viewer.sprite.setTextureRect(sf::IntRect(0, 0, (int) item.image.getSize().x, (int) item.image.getSize().y));
     
-    viewer.sprite.setScale(1.0f, 1.0f);
-    viewer.sprite.setPosition(0.0f, 0.0f);
+    viewer.sprite.setScale(1, 1);
+    viewer.sprite.setPosition(0, 0);
     std::cout << "Opening [" << (viewer.currentIndex + 1) << " / "
                 << viewer.list.size() << "] " << item.name << " ("
                 << item.size << " bytes)";
@@ -391,7 +391,7 @@ int main(int argc, const char** argv)
     bool isFullscreen = false;
     
     viewer.archiveName = argv[1];
-    viewer.currentRotation = 0.0f;
+    viewer.currentRotation = 0;
     viewer.currentIndex = 0;
     
     std::string tempFilename;
@@ -438,8 +438,8 @@ int main(int argc, const char** argv)
     buttonsSprite.setColor(kDownloadButtonDefaultColor);
     const std::string rawDownloadButton = mine::Base64::decode(kDownloadButton);
     downloadTexture.loadFromMemory((void*) rawDownloadButton.data(), rawDownloadButton.size());
-    buttonsSprite.setPosition(window.getSize().x - downloadTexture.getSize().x - 10.0f, 0.0f);
-    buttonsSprite.setTextureRect(sf::IntRect(0.0f, 0.0f, 100.0f, 100.0f));
+    buttonsSprite.setPosition(window.getSize().x - downloadTexture.getSize().x - 10, 0);
+    buttonsSprite.setTextureRect(sf::IntRect(0, 0, 100, 100));
     
     std::map<std::size_t, Thumbnail> thumbnails;
     
@@ -580,7 +580,7 @@ int main(int argc, const char** argv)
         
         // thumbnails
         
-        const float kThumbnailScale = 7.0f;
+        const float kThumbnailScale = 7;
         
         const std::size_t firstThumbnailIndex = std::max(viewer.currentIndex - (kMaximumThumbnails / 2), 0);
         const std::size_t totalThumbnails = std::min(viewer.list.size(), static_cast<std::size_t>(kMaximumThumbnails));
@@ -592,10 +592,10 @@ int main(int argc, const char** argv)
             sf::Sprite thumbnailSprite(thumbnailTexture);
             Item item = viewer.list.at(i);
             thumbnailTexture.loadFromImage(item.image);
-            thumbnailSprite.setPosition(((window.getSize().x / 2.0f) - ((totalThumbnails / 2.0f) * kThumbnailSize)) + (idx * kThumbnailSize),
+            thumbnailSprite.setPosition(((window.getSize().x / 2) - ((totalThumbnails / 2) * kThumbnailSize)) + (idx * kThumbnailSize),
                                         window.getSize().y - kThumbnailSize - 10);
-            thumbnailSprite.setTextureRect(sf::IntRect(0.0f, 0.0f, kThumbnailSize * kThumbnailScale, kThumbnailSize * kThumbnailScale));
-            thumbnailSprite.setScale(1.0 / kThumbnailScale, 1.0 / kThumbnailScale);
+            thumbnailSprite.setTextureRect(sf::IntRect(0, 0, kThumbnailSize * kThumbnailScale, kThumbnailSize * kThumbnailScale));
+            thumbnailSprite.setScale(1 / kThumbnailScale, 1 / kThumbnailScale);
             if (i == viewer.currentIndex)
             {
                 thumbnailSprite.setColor(sf::Color(255, 255, 255, 100));
