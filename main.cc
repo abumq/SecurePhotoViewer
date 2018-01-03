@@ -26,6 +26,8 @@
  */
 
 #include <vector>
+#include <map>
+#include <utility>
 #include <iostream>
 #include <fstream>
 #include <algorithm>
@@ -58,6 +60,16 @@ static const float kMoveFactor = 20.0f;
  * Right angle (90')
  */
 static const float kRightAngle = 90.0f;
+
+/**
+ * Maximum number of thumbnails to display
+ */
+static const int kMaximumThumbnails = 20;
+
+/**
+ * Size of thumbnail in pixels
+ */
+static const std::size_t kThumbnailSize = 100;
 
 /**
  * Represents single item with it's attributes
@@ -128,6 +140,13 @@ struct Viewer
      * Items in archive being viewed
      */
     std::vector<Item> list;
+};
+
+struct Thumbnail
+{
+    std::size_t index;
+    sf::Sprite sprite;
+    std::string name;
 };
 
 /**
@@ -381,14 +400,16 @@ int main(int argc, const char** argv)
     navigate();
     window.setTitle(getWindowTitle());
     
+    // Buttons
     sf::Texture downloadTexture;
     sf::Sprite buttonsSprite(downloadTexture);
-    buttonsSprite.setTextureRect(sf::IntRect(0, 0, 100, 100));
     buttonsSprite.setColor(kDownloadButtonDefaultColor);
     const std::string rawDownloadButton = mine::Base64::decode(kDownloadButton);
     downloadTexture.loadFromMemory((void*) rawDownloadButton.data(), rawDownloadButton.size());
     buttonsSprite.setPosition(0, 0);
     buttonsSprite.setTextureRect(sf::IntRect(0, 0, 100, 100));
+    
+    std::map<std::size_t, Thumbnail> thumbnails;
     
     while (window.isOpen())
     {
@@ -430,7 +451,26 @@ int main(int argc, const char** argv)
                             }
                             else
                             {
-                                next(&window);
+                                int newIndex = -1;
+                                for (auto& thumbnailPair : thumbnails)
+                                {
+                                    const Thumbnail* const thumbnail = &(thumbnailPair.second);
+                                    if (thumbnail->sprite.getGlobalBounds().contains(pos.x, pos.y))
+                                    {
+                                        newIndex = thumbnail->index;
+                                        break;
+                                    }
+                                }
+                                if (newIndex == -1)
+                                {
+                                    next(&window);
+                                }
+                                else
+                                {
+                                    viewer.currentIndex = newIndex;
+                                    navigate();
+                                    window.setTitle(getWindowTitle());
+                                }
                             }
                             break;
                         case sf::Mouse::Button::Right:
@@ -503,6 +543,33 @@ int main(int argc, const char** argv)
         
         window.clear(sf::Color::Black);
         window.draw(viewer.sprite);
+        
+        // thumbnails
+        const std::size_t firstThumbnailIndex = std::max(viewer.currentIndex - (kMaximumThumbnails / 2), 0);
+        const std::size_t totalThumbnails = std::min(viewer.list.size(), static_cast<std::size_t>(kMaximumThumbnails));
+        for (std::size_t i = firstThumbnailIndex, idx = 0;
+             i < std::min(totalThumbnails + firstThumbnailIndex, viewer.list.size());
+             ++i, ++idx)
+        {
+            sf::Texture thumbnailTexture;
+            sf::Sprite thumbnailSprite(thumbnailTexture);
+            Item item = viewer.list.at(i);
+            thumbnailTexture.loadFromImage(item.image);
+            thumbnailSprite.setPosition(((window.getSize().x / 2) - ((totalThumbnails / 2) * kThumbnailSize)) + (idx * kThumbnailSize), window.getSize().y - kThumbnailSize - 10);
+            thumbnailSprite.setTextureRect(sf::IntRect(0, 0, kThumbnailSize, kThumbnailSize));
+            thumbnailSprite.setScale(1, 1);
+            if (i == viewer.currentIndex)
+            {
+                thumbnailSprite.setColor(sf::Color(0, 0, 255, 200));
+            }
+            else
+            {
+                thumbnailSprite.setColor(sf::Color(255, 255, 255, 100));
+            }
+            thumbnails[idx] = { i, thumbnailSprite, item.name };
+            window.draw(thumbnailSprite);
+        }
+        
         window.draw(buttonsSprite);
         window.display();
     }
