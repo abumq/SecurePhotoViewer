@@ -50,4 +50,4 @@ To open sample archive
 - F Key: Enter/exit Fullscreen
 - Escape: Exit
 
- [banner]: https://github.com/abumq/SecurePhotoViewer/raw/master/screenshot.png?v1
+ [screenshot]: https://github.com/abumq/SecurePhotoViewer/raw/master/screenshot.png?v1
