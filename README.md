@@ -1,8 +1,8 @@
 # SecurePhotoViewer
 
-View encrypted archive of photo
+View encrypted archive of photos.
 
-This is for personal use but I thought to make the code public for anyone who is interested.
+This was built for personal use but I thought to make the code public for anyone who is interested.
 
 ![screenshot]
 
@@ -20,8 +20,13 @@ The contents of archive is expected to be in following format
 Prerequisites:
  * [libzip](https://github.com/nih-at/libzip/blob/master/INSTALL.md)
  * [SFML 2.6.0](https://github.com/SFML/SFML/releases/tag/2.6.0)
+ * C++17
  
 Once you have above libraries properly installed, simply run `make` command to build binary.
+
+## Why C++17?
+
+The only feature used from C++17 standard is [filesystem](https://en.cppreference.com/w/cpp/filesystem) library, otherwise C++11 should be fine if you remove `createDirectory()` function or replace it with an alternative.
 
 ### Usage
 
@@ -32,6 +37,7 @@ param and archive name in second, e.g,
    ./secure-photo-viewer ARCHIVE KEY <INITIAL_IMAGE>
 ```
 
+### Demo
 To open sample archive
 
 ```
