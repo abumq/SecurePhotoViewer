@@ -23,6 +23,7 @@
  *      - Escape: Exit
  *
  * Author: abumq (Majid Q.)
+ * https://github.com/abumq/SecurePhotoViewer
  */
 
 #include <vector>
@@ -31,6 +32,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <filesystem>
 
 #include <SFML/Graphics.hpp>
 
@@ -38,10 +40,12 @@
 #include "external/libzippp.h"
 #include "external/rc.h"
 
+namespace fs = std::filesystem;
+
 /**
  * Path where images are saved
  */
-static const std::string kSavePath = "/Users/mkhan/Downloads/";
+static const std::string kSavePath = "/tmp/secure_photo_viewer/";
 
 /**
  * Download button default color (at normal state)
@@ -159,6 +163,17 @@ struct Thumbnail
      */
     sf::Sprite sprite;
 };
+
+/**
+ * Creates directory (no access fail check)
+ */
+void createDirectory(const std::string& path)
+{
+    if (!fs::exists(path) || !fs::is_directory(path))
+    {
+        fs::create_directory(path); // the non-directory check is part of standard impl.
+    }
+}
 
 /**
  * Global viewer object
@@ -414,8 +429,16 @@ int main(int argc, const char** argv)
     }
     
     viewer.list = createList(tempFilename, argc > 2);
+
+    std::cout << "Ensuring the directory [" << kSavePath << "] exists ..." << std::endl;
+    createDirectory(kSavePath);
+
+    std::cout << "Loading GUI ..." << std::endl;
     
-    const sf::VideoMode winMode = sf::VideoMode::getFullscreenModes().at(0);
+    const sf::VideoMode winMode = sf::VideoMode::getFullscreenModes().size() == 0
+        ? sf::VideoMode::getDesktopMode()
+        : sf::VideoMode::getFullscreenModes().at(0);
+
     sf::Image winIcon;
     const std::string rawIcon = mine::Base64::decode(kWindowIcon);
     winIcon.loadFromMemory((void*) rawIcon.data(), rawIcon.size());
