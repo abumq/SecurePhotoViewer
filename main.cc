@@ -22,7 +22,7 @@
  *      - F: Enter/exit Fullscreen
  *      - Escape: Exit
  *
- * Author: abumusamq (Majid)
+ * Author: abumq (Majid Q.)
  */
 
 #include <vector>
